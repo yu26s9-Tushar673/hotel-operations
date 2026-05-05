@@ -78,7 +78,7 @@ public class Employee
             return;
         } else {
             punchInTime = time;
-            System.out.println("Employee " + this.employeeID + ": " + this.name + "punched in at " + formatTime(punchInTime));
+            System.out.println("Employee " + this.employeeID + ": " + this.name + " punched in at " + formatTime(punchInTime));
         }
     }
 
@@ -143,6 +143,22 @@ public class Employee
 
     public double getPayRate() {
         return payRate;
+    }
+
+    public int getPunchInTime() {
+        return punchInTime;
+    }
+
+    public void setPunchInTime(int punchInTime) {
+        this.punchInTime = punchInTime;
+    }
+
+    public int getPunchInMin() {
+        return punchInMin;
+    }
+
+    public void setPunchInMin(int punchInMin) {
+        this.punchInMin = punchInMin;
     }
 
     public void setPayRate(double payRate) {
