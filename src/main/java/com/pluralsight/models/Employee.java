@@ -7,6 +7,8 @@ public class Employee
     private String department;
     private double payRate;
     private double hoursWorked;
+    private int punchInTime = -1;
+
 
     public Employee(int employeeID, String name, String department, double payRate, double hoursWorked) {
         this.employeeID = employeeID;
@@ -14,6 +16,41 @@ public class Employee
         this.department = department;
         this.payRate = payRate;
         this.hoursWorked = hoursWorked;
+    }
+
+    private String formatTime(int time) {
+        if (time == 0)
+        {   return "12:00 am."; }
+        else if (time == 12)
+        {   return "12:00 pm."; }
+        else if (time < 12)
+        {   return time + ":00 am.";    }
+        else
+        {   return (time - 12) + ":00 pm."; }
+    }
+
+    public void punchIn(int time) {
+        if (punchInTime != -1) {
+            System.out.println("Employee " + this.employeeID + ": " + this.name + " already punched in at " + formatTime(punchInTime));
+            return;
+        } else {
+            punchInTime = time;
+            System.out.println("Employee " + this.employeeID + ": " + this.name + "punched in at " + formatTime(punchInTime));
+        }
+    }
+
+    public void punchOut(int time) {
+        if (punchInTime == -1) {
+            System.out.println("Employee " + this.employeeID + ": " + this.name + "never punched in.");
+            return;
+        } else if (time <= punchInTime) {
+            System.out.println("Invalid punch out time. Must punch out AFTER punch in time.");
+            return;
+        }
+        double shiftHours = time - punchInTime;
+        hoursWorked += shiftHours;
+        System.out.println("Employee " + this.employeeID + ": " + this.name + " punched out at " + formatTime(time) + " Shift Hours: " + shiftHours + " | Total Hours Worked: " + hoursWorked);
+        punchInTime = -1; // reset after punch out
     }
 
     public double getTotalPay() {
