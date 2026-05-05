@@ -1,5 +1,7 @@
 package com.pluralsight.models;
 
+import java.time.LocalDateTime;
+
 public class Employee
 {
     private int employeeID;
@@ -8,7 +10,7 @@ public class Employee
     private double payRate;
     private double hoursWorked;
     private int punchInTime = -1;
-
+    private int punchInMin = 0;
 
     public Employee(int employeeID, String name, String department, double payRate, double hoursWorked) {
         this.employeeID = employeeID;
@@ -27,6 +29,47 @@ public class Employee
         {   return time + ":00 am.";    }
         else
         {   return (time - 12) + ":00 pm."; }
+    }
+
+    private String formatTime(int hour, int min) {
+        String timeOfDay;
+        if (hour < 12) {    timeOfDay = "am.";  }
+        else { timeOfDay = "pm."; }
+        int displayHour = hour % 12;
+        if (displayHour == 0) { displayHour = 12; }
+        return String.format( "%d:%02d %s", displayHour, min, timeOfDay);
+    }
+    public void punchIn() {
+        if (punchInTime != -1) {
+            System.out.println("Employee " + this.employeeID + ": " + this.name + " already punched in at " + formatTime(punchInTime, punchInMin));
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        punchInTime = now.getHour();
+        punchInMin = now.getMinute();
+        System.out.println("Employee " + this.employeeID + ": " + this.name + "punched in at " + formatTime(punchInTime, punchInMin));
+    }
+
+    public void punchOut() {
+        if (punchInTime == -1) {
+            System.out.println("Employee " + this.employeeID + ": " + this.name + "never punched in.");
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        int outTime = now.getHour();
+        int outMin = now.getMinute();
+
+        int minutesAtPunchIn = (punchInTime * 60) + punchInMin;
+        int minutesAtPunchOut = (outTime * 60) + outMin;
+
+        if (minutesAtPunchOut <= minutesAtPunchIn) {
+            System.out.println("Invalid punch out time. Must punch out AFTER punch in time.");
+        }
+        double shiftHours = (minutesAtPunchOut - minutesAtPunchIn) / 60.0;
+        hoursWorked += shiftHours;
+
+        System.out.printf("%s punched OUT at %s. Session: %.2f hrs | Total: %.2f hrs.%n",
+                name, formatTime(outTime, outMin), shiftHours, hoursWorked);
     }
 
     public void punchIn(int time) {
@@ -49,7 +92,8 @@ public class Employee
         }
         double shiftHours = time - punchInTime;
         hoursWorked += shiftHours;
-        System.out.println("Employee " + this.employeeID + ": " + this.name + " punched out at " + formatTime(time) + " Shift Hours: " + shiftHours + " | Total Hours Worked: " + hoursWorked);
+        System.out.printf("%s punched OUT at %s. Session: %.2f hrs | Total: %.2f hrs.%n",
+                name, formatTime(time), shiftHours, hoursWorked);
         punchInTime = -1; // reset after punch out
     }
 
